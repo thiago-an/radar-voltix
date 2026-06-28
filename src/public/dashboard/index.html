@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b0d0f">
+    <title>Radar Voltix | Dashboard</title>
+    <link rel="stylesheet" href="/dashboard/assets/dashboard.css?v=8">
+    <script src="/dashboard/assets/dashboard.js?v=8" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/dashboard" aria-label="Radar Voltix">
+        <span class="brand-mark" aria-hidden="true">V</span>
+        <span class="brand-copy">
+          <strong>VOLTIX TECH</strong>
+          <span>Radar de oportunidades</span>
+        </span>
+      </a>
+
+      <div class="topbar-actions">
+        <span id="sync-state" class="sync-state" aria-live="polite">
+          <span class="status-dot status-dot--muted"></span>
+          Atualizando
+        </span>
+        <button id="whatsapp-test-button" class="button button--secondary" type="button">
+          Testar WhatsApp
+        </button>
+        <button id="radar-run-button" class="button button--primary" type="button">
+          Executar Radar Agora
+        </button>
+      </div>
+    </header>
+
+    <main class="dashboard-shell">
+      <section class="page-heading" aria-labelledby="dashboard-title">
+        <div>
+          <p class="eyebrow">OPERAÇÃO LOCAL</p>
+          <h1 id="dashboard-title">Visão geral</h1>
+        </div>
+        <p class="updated-at">Atualizado <time id="last-updated">agora</time></p>
+      </section>
+
+      <section class="metrics-grid" aria-label="Indicadores do Radar Voltix">
+        <article class="metric-card">
+          <div class="metric-heading">
+            <span class="metric-label">Sistema</span>
+            <span id="system-dot" class="status-dot status-dot--muted"></span>
+          </div>
+          <strong id="system-status" class="metric-value metric-value--text">Verificando</strong>
+          <span id="system-detail" class="metric-detail">Conectando ao serviço local</span>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-heading">
+            <span class="metric-label">WhatsApp</span>
+            <span id="whatsapp-dot" class="status-dot status-dot--muted"></span>
+          </div>
+          <strong id="whatsapp-status" class="metric-value metric-value--text">Verificando</strong>
+          <span id="whatsapp-detail" class="metric-detail">Status da sessão</span>
+        </article>
+
+        <article class="metric-card">
+          <span class="metric-label">Última execução</span>
+          <strong id="last-run" class="metric-value metric-value--text">Nenhuma</strong>
+          <span id="last-run-detail" class="metric-detail">Aguardando primeira busca</span>
+        </article>
+
+        <article class="metric-card metric-card--accent">
+          <span class="metric-label">Produtos encontrados</span>
+          <strong id="products-found" class="metric-value">--</strong>
+          <span class="metric-detail">Na última execução</span>
+        </article>
+
+        <article class="metric-card metric-card--cyan">
+          <span class="metric-label">Oportunidades</span>
+          <strong id="opportunities-found" class="metric-value">--</strong>
+          <span class="metric-detail">Acima do score mínimo</span>
+        </article>
+
+        <article class="metric-card metric-card--amber">
+          <span class="metric-label">Alertas enviados</span>
+          <strong id="alerts-sent" class="metric-value">--</strong>
+          <span class="metric-detail">Na última execução</span>
+        </article>
+      </section>
+
+      <section class="data-panel stores-panel" aria-labelledby="stores-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">CRAWLER MANAGER</p>
+            <h2 id="stores-title">Status das Lojas</h2>
+          </div>
+          <span id="stores-count" class="count-badge">0 habilitadas</span>
+        </div>
+        <div id="stores-status-list" class="stores-status-list">
+          <p class="empty-state">Carregando status das lojas...</p>
+        </div>
+      </section>
+
+      <section class="data-panel stores-panel" aria-labelledby="deal-sources-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">DEAL SOURCE MANAGER</p>
+            <h2 id="deal-sources-title">Status das Fontes</h2>
+          </div>
+          <span id="deal-sources-count" class="count-badge">0 habilitadas</span>
+        </div>
+        <div id="deal-sources-status-list" class="stores-status-list">
+          <p class="empty-state">Carregando status das fontes...</p>
+        </div>
+      </section>
+
+      <section class="content-grid profit-grid">
+        <section class="data-panel" aria-labelledby="profit-simulator-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">PROFIT ENGINE</p>
+              <h2 id="profit-simulator-title">Simulador de lucro</h2>
+            </div>
+          </div>
+          <form id="profit-form" class="profit-form">
+            <label class="form-field" for="profit-buy">
+              <span>Preço de compra</span>
+              <input id="profit-buy" type="number" min="0.01" step="0.01" required>
+            </label>
+            <label class="form-field" for="profit-sell">
+              <span>Preço de venda</span>
+              <input id="profit-sell" type="number" min="0.01" step="0.01" required>
+            </label>
+            <label class="form-field" for="profit-marketplace">
+              <span>Marketplace</span>
+              <select id="profit-marketplace">
+                <option value="mercadolivre">Mercado Livre</option>
+                <option value="shopee">Shopee</option>
+                <option value="tiktokshop">TikTok Shop</option>
+                <option value="facebook">Facebook Marketplace</option>
+              </select>
+            </label>
+            <label class="form-field" for="profit-shipping">
+              <span>Frete</span>
+              <input id="profit-shipping" type="number" min="0" step="0.01" placeholder="Médio da plataforma">
+            </label>
+            <label class="form-field" for="profit-packaging">
+              <span>Embalagem</span>
+              <input id="profit-packaging" type="number" min="0" step="0.01" value="0">
+            </label>
+            <button id="profit-submit" class="button button--primary profit-submit" type="submit">Calcular</button>
+          </form>
+          <div class="profit-results" aria-live="polite">
+            <div><span>Lucro bruto</span><strong id="profit-gross">--</strong></div>
+            <div><span>Lucro líquido</span><strong id="profit-net">--</strong></div>
+            <div><span>ROI</span><strong id="profit-roi">--</strong></div>
+            <div><span>Taxas</span><strong id="profit-fees">--</strong></div>
+            <div class="profit-recommendation"><span>Recomendação</span><strong id="profit-recommended">Aguardando cálculo</strong></div>
+          </div>
+        </section>
+
+        <section class="data-panel" aria-labelledby="top-profits-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">RESULTADO LÍQUIDO</p>
+              <h2 id="top-profits-title">Top Lucros do Dia</h2>
+            </div>
+            <span id="top-profits-count" class="count-badge">0 produtos</span>
+          </div>
+          <div id="top-profits-list" class="profit-list">
+            <p class="empty-state">Carregando estimativas...</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="data-panel marketplace-advisor-panel" aria-labelledby="marketplace-advisor-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">MARKETPLACE INTELLIGENCE</p>
+            <h2 id="marketplace-advisor-title">Melhor Marketplace</h2>
+          </div>
+          <span id="marketplace-advisor-product" class="count-badge">Aguardando oportunidade</span>
+        </div>
+        <div id="marketplace-advisor-content" class="marketplace-advisor-content" aria-live="polite">
+          <p class="empty-state">O comparativo aparecerá após a primeira oportunidade aprovada.</p>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <section class="data-panel data-panel--wide" aria-labelledby="alerts-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">OPORTUNIDADES</p>
+              <h2 id="alerts-title">Últimos alertas</h2>
+            </div>
+            <span id="alerts-count" class="count-badge">0 registros</span>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Loja</th>
+                  <th>Preço</th>
+                  <th>Score</th>
+                  <th>Enviado</th>
+                </tr>
+              </thead>
+              <tbody id="alerts-table-body">
+                <tr><td class="loading-cell" colspan="5">Carregando alertas...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="data-panel" aria-labelledby="history-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">MOVIMENTO DE PREÇOS</p>
+              <h2 id="history-title">Histórico recente</h2>
+            </div>
+            <span id="history-count" class="count-badge">0 itens</span>
+          </div>
+          <div id="history-list" class="history-list">
+            <p class="empty-state">Carregando histórico...</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="data-panel inventory-panel" aria-labelledby="inventory-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">REVENDA</p>
+            <h2 id="inventory-title">Estoque</h2>
+          </div>
+          <button id="inventory-add-button" class="button button--primary" type="button">Adicionar compra</button>
+        </div>
+        <div class="inventory-metrics">
+          <div><span>Produtos em estoque</span><strong id="inventory-products">0</strong></div>
+          <div><span>Quantidade</span><strong id="inventory-quantity">0</strong></div>
+          <div><span>Custo total</span><strong id="inventory-cost">--</strong></div>
+          <div><span>Venda esperada</span><strong id="inventory-sale-value">--</strong></div>
+          <div><span>Lucro esperado</span><strong id="inventory-profit">--</strong></div>
+        </div>
+        <div class="table-scroll">
+          <table class="inventory-table">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Custo unitário</th>
+                <th>Custo total</th>
+                <th>Venda esperada</th>
+                <th>Lucro esperado</th>
+                <th>Marketplace</th>
+                <th>Status</th>
+                <th class="actions-column">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+              <tr><td class="loading-cell" colspan="9">Carregando estoque...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="data-panel watchlist-panel" aria-labelledby="watchlist-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">MONITORAMENTO</p>
+            <h2 id="watchlist-title">Watchlist cadastrada</h2>
+          </div>
+          <div class="panel-actions">
+            <span id="watchlist-count" class="count-badge">0 itens</span>
+            <button id="new-product-button" class="button button--primary" type="button">Novo Produto</button>
+          </div>
+        </div>
+        <div class="watchlist-toolbar">
+          <label class="filter-field" for="watchlist-search">
+            <span>Buscar</span>
+            <input id="watchlist-search" type="search" placeholder="Nome ou query" autocomplete="off">
+          </label>
+          <label class="filter-field" for="watchlist-category-filter">
+            <span>Categoria</span>
+            <select id="watchlist-category-filter">
+              <option value="">Todas as categorias</option>
+            </select>
+          </label>
+          <span id="watchlist-result-count" class="filter-result" aria-live="polite"></span>
+        </div>
+        <div class="table-scroll">
+          <table class="watchlist-table">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Busca</th>
+                <th>Preço máximo</th>
+                <th>Venda esperada</th>
+                <th>Margem mínima</th>
+                <th>Categoria</th>
+                <th>Prioridade</th>
+                <th>Lojas</th>
+                <th>Status</th>
+                <th class="actions-column">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="watchlist-table-body">
+              <tr><td class="loading-cell" colspan="10">Carregando watchlist...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="watchlist-dialog" class="modal" aria-labelledby="watchlist-dialog-title">
+      <form id="watchlist-form" class="modal-card" novalidate>
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">WATCHLIST</p>
+            <h2 id="watchlist-dialog-title">Novo Produto</h2>
+          </div>
+          <button id="watchlist-dialog-close" class="icon-button" type="button" aria-label="Fechar" title="Fechar">&times;</button>
+        </header>
+
+        <div class="modal-body form-grid">
+          <input id="watchlist-id" name="id" type="hidden">
+
+          <label class="form-field form-field--wide" for="watchlist-name">
+            <span>Nome <b>*</b></span>
+            <input id="watchlist-name" name="name" type="text" maxlength="160" required>
+            <small class="field-error" data-error-for="name"></small>
+          </label>
+
+          <label class="form-field form-field--wide" for="watchlist-query">
+            <span>Query de busca <b>*</b></span>
+            <input id="watchlist-query" name="query" type="text" maxlength="220" required>
+            <small class="field-error" data-error-for="query"></small>
+          </label>
+
+          <label class="form-field" for="watchlist-max-buy-price">
+            <span>Preço máximo de compra <b>*</b></span>
+            <input id="watchlist-max-buy-price" name="maxBuyPrice" type="number" min="0.01" step="0.01" inputmode="decimal" required>
+            <small class="field-error" data-error-for="maxBuyPrice"></small>
+          </label>
+
+          <label class="form-field" for="watchlist-expected-sell-price">
+            <span>Preço esperado de venda <b>*</b></span>
+            <input id="watchlist-expected-sell-price" name="expectedSellPrice" type="number" min="0.01" step="0.01" inputmode="decimal" required>
+            <small class="field-error" data-error-for="expectedSellPrice"></small>
+          </label>
+
+          <label class="form-field" for="watchlist-min-margin">
+            <span>Margem mínima (%)</span>
+            <input id="watchlist-min-margin" name="minMarginPercent" type="number" min="0" step="0.01" inputmode="decimal" value="25" required>
+            <small class="field-error" data-error-for="minMarginPercent"></small>
+          </label>
+
+          <label class="form-field" for="watchlist-priority">
+            <span>Prioridade</span>
+            <select id="watchlist-priority" name="priority" required>
+              <option value="1">1 - Baixa</option>
+              <option value="2">2</option>
+              <option value="3">3 - Média</option>
+              <option value="4">4</option>
+              <option value="5">5 - Alta</option>
+            </select>
+            <small class="field-error" data-error-for="priority"></small>
+          </label>
+
+          <label class="form-field form-field--wide" for="watchlist-category">
+            <span>Categoria</span>
+            <input id="watchlist-category" name="category" type="text" maxlength="100" placeholder="Ex.: mouse gamer">
+          </label>
+
+          <fieldset class="store-fieldset form-field--wide">
+            <legend>Lojas permitidas</legend>
+            <p>Sem seleção, o radar consulta todas as lojas.</p>
+            <div class="store-options">
+              <label><input type="checkbox" name="allowedStores" value="Kabum"> Kabum</label>
+              <label><input type="checkbox" name="allowedStores" value="Pichau"> Pichau</label>
+              <label><input type="checkbox" name="allowedStores" value="Terabyte"> Terabyte</label>
+              <label><input type="checkbox" name="allowedStores" value="Mercado Livre"> Mercado Livre</label>
+              <label><input type="checkbox" name="allowedStores" value="Amazon"> Amazon</label>
+              <label><input type="checkbox" name="allowedStores" value="Magazine Luiza"> Magazine Luiza</label>
+              <label><input type="checkbox" name="allowedStores" value="Casas Bahia"> Casas Bahia</label>
+              <label><input type="checkbox" name="allowedStores" value="Fast Shop"> Fast Shop</label>
+              <label><input type="checkbox" name="allowedStores" value="Google Shopping"> Google Shopping</label>
+            </div>
+          </fieldset>
+
+          <label class="enabled-control form-field--wide" for="watchlist-enabled">
+            <span>
+              <strong>Monitoramento ativo</strong>
+              <small>Inclui este produto nas próximas execuções do radar.</small>
+            </span>
+            <span class="switch">
+              <input id="watchlist-enabled" name="enabled" type="checkbox" checked>
+              <span class="switch-track" aria-hidden="true"></span>
+            </span>
+          </label>
+
+          <p id="watchlist-form-feedback" class="form-feedback" role="status" aria-live="polite"></p>
+        </div>
+
+        <footer class="modal-footer">
+          <button id="watchlist-form-cancel" class="button button--secondary" type="button">Cancelar</button>
+          <button id="watchlist-form-submit" class="button button--primary" type="submit">Salvar Produto</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="delete-dialog" class="modal modal--compact" aria-labelledby="delete-dialog-title">
+      <div class="modal-card">
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">CONFIRMAÇÃO</p>
+            <h2 id="delete-dialog-title">Excluir produto</h2>
+          </div>
+          <button id="delete-dialog-close" class="icon-button" type="button" aria-label="Fechar" title="Fechar">&times;</button>
+        </header>
+        <div class="modal-body">
+          <p class="delete-message">O item <strong id="delete-product-name"></strong> será removido da watchlist.</p>
+        </div>
+        <footer class="modal-footer">
+          <button id="delete-cancel-button" class="button button--secondary" type="button">Cancelar</button>
+          <button id="delete-confirm-button" class="button button--danger" type="button">Excluir Produto</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog id="inventory-dialog" class="modal" aria-labelledby="inventory-dialog-title">
+      <form id="inventory-form" class="modal-card" novalidate>
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">ESTOQUE</p>
+            <h2 id="inventory-dialog-title">Adicionar compra</h2>
+          </div>
+          <button id="inventory-dialog-close" class="icon-button" type="button" aria-label="Fechar">&times;</button>
+        </header>
+        <div class="modal-body form-grid">
+          <label class="form-field form-field--wide" for="inventory-name">
+            <span>Produto <b>*</b></span>
+            <input id="inventory-name" type="text" maxlength="180" required>
+          </label>
+          <label class="form-field" for="inventory-sku">
+            <span>SKU</span>
+            <input id="inventory-sku" type="text" maxlength="80">
+          </label>
+          <label class="form-field" for="inventory-category">
+            <span>Categoria</span>
+            <input id="inventory-category" type="text" maxlength="100">
+          </label>
+          <label class="form-field" for="inventory-item-quantity">
+            <span>Quantidade <b>*</b></span>
+            <input id="inventory-item-quantity" type="number" min="0" step="1" value="1" required>
+          </label>
+          <label class="form-field" for="inventory-purchase-price">
+            <span>Preço de compra <b>*</b></span>
+            <input id="inventory-purchase-price" type="number" min="0.01" step="0.01" required>
+          </label>
+          <label class="form-field" for="inventory-sell-price">
+            <span>Venda esperada <b>*</b></span>
+            <input id="inventory-sell-price" type="number" min="0.01" step="0.01" required>
+          </label>
+          <label class="form-field" for="inventory-marketplace">
+            <span>Marketplace</span>
+            <select id="inventory-marketplace">
+              <option value="mercadolivre">Mercado Livre</option>
+              <option value="shopee">Shopee</option>
+              <option value="tiktokshop">TikTok Shop</option>
+              <option value="facebook">Facebook Marketplace</option>
+            </select>
+          </label>
+          <label class="form-field form-field--wide" for="inventory-notes">
+            <span>Observações</span>
+            <input id="inventory-notes" type="text" maxlength="300">
+          </label>
+          <p id="inventory-feedback" class="form-feedback" role="status"></p>
+        </div>
+        <footer class="modal-footer">
+          <button id="inventory-cancel" class="button button--secondary" type="button">Cancelar</button>
+          <button id="inventory-submit" class="button button--primary" type="submit">Salvar compra</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="movement-dialog" class="modal modal--compact" aria-labelledby="movement-dialog-title">
+      <form id="movement-form" class="modal-card" novalidate>
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">MOVIMENTO</p>
+            <h2 id="movement-dialog-title">Registrar venda</h2>
+          </div>
+          <button id="movement-dialog-close" class="icon-button" type="button" aria-label="Fechar">&times;</button>
+        </header>
+        <div class="modal-body form-grid">
+          <input id="movement-item-id" type="hidden">
+          <input id="movement-type" type="hidden">
+          <p id="movement-product-name" class="movement-product form-field--wide"></p>
+          <label class="form-field form-field--wide" for="movement-quantity">
+            <span id="movement-quantity-label">Quantidade <b>*</b></span>
+            <input id="movement-quantity" type="number" step="1" required>
+          </label>
+          <label class="form-field form-field--wide" for="movement-unit-price">
+            <span>Preço unitário</span>
+            <input id="movement-unit-price" type="number" min="0" step="0.01">
+          </label>
+          <label class="form-field form-field--wide" for="movement-notes">
+            <span>Observações</span>
+            <input id="movement-notes" type="text" maxlength="300">
+          </label>
+          <p id="movement-feedback" class="form-feedback" role="status"></p>
+        </div>
+        <footer class="modal-footer">
+          <button id="movement-cancel" class="button button--secondary" type="button">Cancelar</button>
+          <button id="movement-submit" class="button button--primary" type="submit">Salvar movimento</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

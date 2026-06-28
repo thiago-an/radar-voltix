@@ -1,0 +1,6 @@
+{
+  "watch": ["src", ".env"],
+  "ext": "js,json,sql",
+  "ignore": ["storage/**/*.log", "storage/**/*.sqlite", "storage/sessions/**", "node_modules/**"],
+  "exec": "node --no-warnings src/server.js"
+}

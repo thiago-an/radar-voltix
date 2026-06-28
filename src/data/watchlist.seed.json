@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Mouse Gamer Fantech VX6",
+    "query": "mouse gamer fantech vx6",
+    "maxBuyPrice": 35,
+    "expectedSellPrice": 59.9,
+    "minMarginPercent": 25,
+    "category": "mouse gamer",
+    "priority": 4,
+    "allowedStores": ["Kabum", "Pichau", "Terabyte", "Mercado Livre"]
+  },
+  {
+    "name": "SSD NVMe 1TB",
+    "query": "ssd nvme 1tb",
+    "maxBuyPrice": 250,
+    "expectedSellPrice": 3429.9,
+    "minMarginPercent": 25,
+    "category": "armazenamento",
+    "priority": 3,
+    "allowedStores": ["Kabum", "Pichau", "Terabyte", "Mercado Livre"]
+  },
+  {
+    "name": "Notebook Ryzen 5",
+    "query": "notebook ryzen 5",
+    "maxBuyPrice": 2200,
+    "expectedSellPrice": 2799.9,
+    "minMarginPercent": 20,
+    "category": "notebook",
+    "priority": 5,
+    "allowedStores": ["Kabum", "Mercado Livre"]
+  }
+]
