@@ -319,25 +319,26 @@ async function runRadar(options = {}) {
     const ranking = dailyRankingService
   .buildDailyRanking(summary.rankingCandidates, env.dailyRankingLimit)
   .filter((item) => item.rankingScore >= env.minRankingScore);
-  rankingRepository.create({
-  source: settings.source,
-  messageSent: false,
-  items: ranking.map((item) => ({
-    title: item.product.title,
-    store: item.product.store,
-    price: item.product.price,
-    link: item.product.link,
-    score: item.rankingScore,
-    netProfit: item.profit?.netProfit,
-    roi: item.profit?.roi,
-    recommendation: item.opportunity?.recommendation,
-    priceIntelligence: item.priceIntelligence
-  }))
-});
 
     const message = dailyRankingService.formatDailyRankingMessage(ranking);
 
     const sendResult = await whatsappService.sendMessage(message);
+
+    rankingRepository.create({
+  source: settings.source,
+  messageSent: Boolean(sendResult.sent),
+  items: ranking.map((item) => ({
+    title: item.product?.title || item.title,
+    store: item.product?.store || item.store,
+    price: item.product?.price || item.price,
+    link: item.product?.link || item.link,
+    score: item.rankingScore,
+    netProfit: item.profit?.netProfit || item.netProfit,
+    roi: item.profit?.roi || item.roi,
+    recommendation: item.opportunity?.recommendation || item.recommendation,
+    priceIntelligence: item.priceIntelligence
+  }))
+});
 
     summary.rankingSize = ranking.length;
 
