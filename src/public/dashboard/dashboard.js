@@ -10,6 +10,7 @@ const state = {
   alerts: [],
   history: [],
   watchlist: [],
+  latestRanking: null,
   watchlistFilters: {
     search: "",
     category: ""
@@ -121,7 +122,9 @@ const elements = {
   deleteConfirmButton: document.querySelector("#delete-confirm-button"),
   radarRunButton: document.querySelector("#radar-run-button"),
   whatsappTestButton: document.querySelector("#whatsapp-test-button"),
-  toast: document.querySelector("#toast")
+  toast: document.querySelector("#toast"),
+  rankingCount: document.querySelector("#ranking-count"),
+rankingList: document.querySelector("#ranking-list"),
 };
 
 let toastTimer;
@@ -132,6 +135,49 @@ function readCachedLastRun() {
   } catch (_error) {
     return null;
   }
+}
+
+function renderLatestRanking() {
+  const latest = state.latestRanking;
+  const items = latest?.items || [];
+
+  if (elements.rankingCount) {
+    elements.rankingCount.textContent = pluralize(items.length, "oportunidade", "oportunidades");
+  }
+
+  if (!elements.rankingList) return;
+
+  if (!items.length) {
+    elements.rankingList.innerHTML = '<p class="empty-state">Nenhum ranking gerado ainda.</p>';
+    return;
+  }
+
+  elements.rankingList.innerHTML = items.map((item, index) => {
+    const link = safeUrl(item.link);
+    const title = escapeHtml(item.title || "Produto");
+    const titleContent = link
+      ? `<a class="product-link" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${title}</a>`
+      : `<span class="product-name">${title}</span>`;
+
+    return `
+      <article class="profit-item">
+        <span class="profit-position">${index + 1}</span>
+        <div class="profit-copy">
+          ${titleContent}
+          <span class="history-meta">
+            ${escapeHtml(item.store || "Radar")} · compra ${formatCurrency(item.price)} · ROI ${escapeHtml(item.roi ?? "--")}%
+          </span>
+          <span class="history-meta">
+            ${escapeHtml(item.priceIntelligence?.label || "Sem inteligência de preço")}
+          </span>
+        </div>
+        <div>
+          <strong class="profit-value">${formatCurrency(item.netProfit)}</strong>
+          <span class="score">${escapeHtml(item.score ?? "--")}</span>
+        </div>
+      </article>
+    `;
+  }).join("");
 }
 
 function cacheLastRun(summary) {
@@ -1103,8 +1149,15 @@ async function loadDashboard(options = {}) {
     request("/inventory"),
     request("/alerts?limit=8"),
     request("/history?limit=6&includeHistory=false"),
-    request("/watchlist?includeDisabled=true")
+    request("/watchlist?includeDisabled=true"),
+    request("/ranking/latest")
   ]);
+
+  if (rankingResult.status === "fulfilled") {
+  state.latestRanking = rankingResult.value.latest;
+}
+
+renderLatestRanking();
 
   const [healthResult, crawlersResult, dealSourcesResult, topProfitsResult, inventoryResult, alertsResult, historyResult, watchlistResult] = results;
 
