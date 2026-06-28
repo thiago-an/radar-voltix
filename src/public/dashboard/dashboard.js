@@ -1153,13 +1153,21 @@ async function loadDashboard(options = {}) {
     request("/ranking/latest")
   ]);
 
-  if (rankingResult.status === "fulfilled") {
+  const [
+  healthResult,
+  crawlersResult,
+  dealSourcesResult,
+  topProfitsResult,
+  inventoryResult,
+  alertsResult,
+  historyResult,
+  watchlistResult,
+  rankingResult
+] = results;
+
+if (rankingResult.status === "fulfilled") {
   state.latestRanking = rankingResult.value.latest;
 }
-
-renderLatestRanking();
-
-  const [healthResult, crawlersResult, dealSourcesResult, topProfitsResult, inventoryResult, alertsResult, historyResult, watchlistResult] = results;
 
   if (healthResult.status === "fulfilled") {
     state.health = healthResult.value;
@@ -1211,6 +1219,7 @@ renderLatestRanking();
   renderHealth();
   renderCrawlerStatus();
   renderDealSourceStatus();
+  renderLatestRanking();
   renderTopProfits();
   renderMarketplaceAdvisor();
   renderInventory();
