@@ -17,6 +17,7 @@ const dailyRankingService = require("./dailyRanking.service");
 const whatsappService = require("./whatsapp.service");
 const logger = require("../utils/logger");
 const rankingRepository = require("../repositories/ranking.repository");
+const productRelevanceService = require("./productRelevance.service");
 
 async function processProduct(rawProduct, watchlistItem, crawlerName, summary, options) {
   if (!isStoreAllowed(watchlistItem, rawProduct.store || crawlerName)) {
@@ -40,25 +41,16 @@ async function processProduct(rawProduct, watchlistItem, crawlerName, summary, o
   }
 
   const product = priceService.recordProductSnapshot(normalizedProduct);
-  const productTitle = String(product.title || "").toLowerCase();
-const watchQuery = String(watchlistItem.query || watchlistItem.name || "").toLowerCase();
+const relevance = productRelevanceService.calculateRelevance(product, watchlistItem);
 
-const queryWords = watchQuery
-  .split(/\s+/)
-  .filter((word) => word.length >= 3);
-
-const matchedWords = queryWords.filter((word) => productTitle.includes(word));
-
-const relevance = queryWords.length
-  ? matchedWords.length / queryWords.length
-  : 0;
-
-if (relevance < 0.6) {
+if (!relevance.relevant) {
   summary.alertsSkipped += 1;
   logger.info(`Produto ignorado por baixa relevância: ${product.title}`, {
     watchlist: watchlistItem.name,
     query: watchlistItem.query,
-    relevance
+    relevance: relevance.score,
+    matchedWords: relevance.matchedWords,
+    queryWords: relevance.queryWords
   });
   return;
 }
