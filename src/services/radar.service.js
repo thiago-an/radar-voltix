@@ -18,6 +18,7 @@ const whatsappService = require("./whatsapp.service");
 const logger = require("../utils/logger");
 const rankingRepository = require("../repositories/ranking.repository");
 const productRelevanceService = require("./productRelevance.service");
+const rankingMapper = require("./rankingMapper.service");
 
 async function processProduct(rawProduct, watchlistItem, crawlerName, summary, options) {
   if (!isStoreAllowed(watchlistItem, rawProduct.store || crawlerName)) {
@@ -117,7 +118,8 @@ if (!duplicateCheck.shouldSend && !options.ignoreDuplicates) {
     return;
   }
 
-  summary.rankingCandidates.push({
+  summary.rankingCandidates.push(
+  rankingMapper.toRankingCandidate({
     product,
     watchlistItem,
     opportunity,
@@ -125,19 +127,9 @@ if (!duplicateCheck.shouldSend && !options.ignoreDuplicates) {
     marketplace: getMarketplace(marketplaceKey),
     inventory,
     marketplaceComparison,
-    duplicateHash: duplicateCheck.hash,
-
-    title: product.title,
-    store: product.store,
-    price: product.price,
-    link: product.link,
-    score: opportunity.score,
-    recommendation: opportunity.recommendation,
-    expectedSellPrice: watchlistItem.expectedSellPrice,
-    netProfit: profit.netProfit,
-    roi: profit.roi,
-    priority: watchlistItem.priority
-  });
+    duplicateHash: duplicateCheck.hash
+  })
+);
 }
 
 async function runRadar(options = {}) {
@@ -327,17 +319,7 @@ async function runRadar(options = {}) {
     rankingRepository.create({
   source: settings.source,
   messageSent: Boolean(sendResult.sent),
-  items: ranking.map((item) => ({
-    title: item.product?.title || item.title,
-    store: item.product?.store || item.store,
-    price: item.product?.price || item.price,
-    link: item.product?.link || item.link,
-    score: item.rankingScore,
-    netProfit: item.profit?.netProfit || item.netProfit,
-    roi: item.profit?.roi || item.roi,
-    recommendation: item.opportunity?.recommendation || item.recommendation,
-    priceIntelligence: item.priceIntelligence
-  }))
+  items: ranking.map(rankingMapper.toPersistedRankingItem)
 });
 
     summary.rankingSize = ranking.length;
