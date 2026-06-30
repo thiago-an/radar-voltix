@@ -125,9 +125,51 @@ const elements = {
   toast: document.querySelector("#toast"),
   rankingCount: document.querySelector("#ranking-count"),
 rankingList: document.querySelector("#ranking-list"),
+dealDayScore: document.querySelector("#deal-day-score"),
+dealDayCard: document.querySelector("#deal-day-card"),
 };
 
 let toastTimer;
+
+function renderDealOfTheDay() {
+  const item = state.latestRanking?.items?.[0];
+
+  if (!elements.dealDayCard) return;
+
+  if (!item) {
+    elements.dealDayCard.innerHTML = '<p class="empty-state">Nenhuma oportunidade selecionada ainda.</p>';
+    if (elements.dealDayScore) elements.dealDayScore.textContent = "--";
+    return;
+  }
+
+  const link = safeUrl(item.link);
+  const title = escapeHtml(item.title || "Produto");
+  const titleContent = link
+    ? `<a class="product-link" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${title}</a>`
+    : `<span class="product-name">${title}</span>`;
+
+  if (elements.dealDayScore) {
+    elements.dealDayScore.textContent = `Score ${item.score ?? "--"}`;
+  }
+
+  elements.dealDayCard.innerHTML = `
+    <article class="profit-item ranking-item">
+      <span class="profit-position">1</span>
+
+      <div class="profit-copy">
+        ${titleContent}
+        <span class="history-meta">${escapeHtml(item.store || "Radar")} · Compra ${formatCurrency(item.price)}</span>
+        <span class="history-meta">Lucro ${formatCurrency(item.netProfit)} · ROI ${escapeHtml(item.roi ?? "--")}%</span>
+        <span class="history-meta">${escapeHtml(item.priceIntelligence?.label || "Sem inteligência de preço")} · ${escapeHtml(item.priceIntelligence?.trendLabel || "Sem tendência")}</span>
+      </div>
+
+      <div class="ranking-values">
+        <strong class="profit-value">${formatCurrency(item.netProfit)}</strong>
+        <span class="score">Melhor opção</span>
+      </div>
+    </article>
+  `;
+}
 
 function readCachedLastRun() {
   try {
@@ -1231,6 +1273,7 @@ if (rankingResult.status === "fulfilled") {
   renderCrawlerStatus();
   renderDealSourceStatus();
   renderLatestRanking();
+  renderDealOfTheDay();
   renderTopProfits();
   renderMarketplaceAdvisor();
   renderInventory();
