@@ -132,7 +132,8 @@ dealDayCard: document.querySelector("#deal-day-card"),
 let toastTimer;
 
 function renderDealOfTheDay() {
-  const item = state.latestRanking?.items?.[0];
+  const items = state.latestRanking?.items || [];
+  const item = items[0];
 
   if (!elements.dealDayCard) return;
 
