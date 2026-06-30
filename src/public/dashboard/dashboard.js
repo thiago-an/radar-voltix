@@ -168,8 +168,17 @@ function renderLatestRanking() {
             ${escapeHtml(item.store || "Radar")} · compra ${formatCurrency(item.price)} · ROI ${escapeHtml(item.roi ?? "--")}%
           </span>
           <span class="history-meta">
-            ${escapeHtml(item.priceIntelligence?.label || "Sem inteligência de preço")}
-          </span>
+  ${escapeHtml(item.priceIntelligence?.label || "Sem inteligência de preço")}
+</span>
+<span class="history-meta">
+  Tendência: ${escapeHtml(item.priceIntelligence?.trendLabel || "Sem tendência")}
+</span>
+<span class="history-meta">
+  Média: ${formatCurrency(item.priceIntelligence?.averagePrice)} · Menor: ${formatCurrency(item.priceIntelligence?.lowestPrice)}
+</span>
+<span class="history-meta">
+  Monitorado: ${escapeHtml(item.priceIntelligence?.monitoredDays ?? "--")} dias · Registros: ${escapeHtml(item.priceIntelligence?.records ?? "--")}
+</span>
         </div>
         <div>
           <strong class="profit-value">${formatCurrency(item.netProfit)}</strong>
