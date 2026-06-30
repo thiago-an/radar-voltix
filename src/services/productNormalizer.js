@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const { env } = require("../config/env");
 const logger = require("../utils/logger");
+const productIdentityService = require("./productIdentity.service");
 const { cleanProductTitle, compactText, normalizeText } = require("../utils/text");
 
 const STOP_WORDS = new Set([
@@ -80,9 +81,14 @@ function normalizeProduct(product) {
   const originalTitle = String(product.productTitle || product.title || "");
   const productTitle = cleanProductTitle(originalTitle);
   const normalizedTitle = normalizeTitle(productTitle);
+
   const productHash = product.productHash || generateProductHash({
     ...product,
     normalizedTitle
+  });
+
+  const identity = productIdentityService.createProductIdentity({
+    title: productTitle
   });
 
   logTitleCleaning(compactText(originalTitle), productTitle);
@@ -93,7 +99,9 @@ function normalizeProduct(product) {
     title: productTitle,
     productTitle,
     normalizedTitle,
-    productHash
+    productHash,
+    canonicalName: identity.canonicalName,
+    productKey: identity.productKey
   };
 }
 

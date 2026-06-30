@@ -43,6 +43,8 @@ CREATE TABLE IF NOT EXISTS price_history (
   product_title TEXT NOT NULL,
   normalized_title TEXT NOT NULL,
   product_hash TEXT NOT NULL,
+  pruduct_key TEXT,
+  canonical_name TEXT,
   price REAL NOT NULL,
   old_price REAL,
   availability TEXT NOT NULL DEFAULT 'unknown',

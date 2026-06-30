@@ -27,7 +27,7 @@ function removeNoiseWords(words) {
     if (!word || word.length < 2) return false;
     if (COLORS.includes(word)) return false;
     if (NOISE_WORDS.includes(word)) return false;
-    if (/^\d+$/.test(word)) return false;
+    if (/^\d+$/.test(word) && word.length < 4) return false;
     return true;
   });
 }

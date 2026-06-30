@@ -12,6 +12,8 @@ function mapHistory(row) {
     productTitle: row.product_title,
     normalizedTitle: row.normalized_title,
     productHash: row.product_hash,
+    productKey: row.product_key,
+    canonicalName: row.canonical_name,
     price: row.price,
     oldPrice: row.old_price,
     availability: row.availability,
@@ -23,6 +25,7 @@ function mapHistory(row) {
 
 function create(input) {
   const capturedAt = input.capturedAt || new Date().toISOString();
+
   const result = getDatabase()
     .prepare(`
       INSERT INTO price_history (
@@ -31,13 +34,15 @@ function create(input) {
         product_title,
         normalized_title,
         product_hash,
+        product_key,
+        canonical_name,
         price,
         old_price,
         availability,
         url,
         image,
         captured_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
     .run(
       input.watchlistId || null,
@@ -45,6 +50,8 @@ function create(input) {
       input.productTitle,
       input.normalizedTitle,
       input.productHash,
+      input.productKey || null,
+      input.canonicalName || null,
       input.price,
       input.oldPrice ?? null,
       input.availability || "unknown",

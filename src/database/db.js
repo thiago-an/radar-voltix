@@ -30,7 +30,27 @@ function initializeDatabase() {
   migratePriceHistorySchema();
   migrateCrawlerLogsSchema();
   getDatabase().exec(schema);
+  migrateProductIdentitySchema();
+  
   return getDatabase();
+}
+
+function migrateProductIdentitySchema() {
+  const columns = getTableColumns("price_history");
+
+  if (!columns.length) {
+    return;
+  }
+
+  const database = getDatabase();
+
+  if (!columns.includes("product_key")) {
+    database.exec("ALTER TABLE price_history ADD COLUMN product_key TEXT;");
+  }
+
+  if (!columns.includes("canonical_name")) {
+    database.exec("ALTER TABLE price_history ADD COLUMN canonical_name TEXT;");
+  }
 }
 
 function getTableColumns(tableName) {

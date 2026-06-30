@@ -1,4 +1,5 @@
 const historyService = require("./history.service");
+const priceAnalytics = require("./priceAnalytics.service");
 
 function average(values) {
   const valid = values.filter((value) => Number.isFinite(Number(value)));
@@ -130,11 +131,12 @@ function analyzeProduct(product) {
   }
 
   const history = historyService.getHistory(productHash) || [];
+  const analytics = priceAnalytics.analyzeHistory(history);
   const prices = history.map((item) => Number(item.price)).filter(Number.isFinite);
 
-  const lowestPrice = prices.length ? Math.min(...prices) : null;
-  const highestPrice = prices.length ? Math.max(...prices) : null;
-  const averagePrice = average(prices);
+  const lowestPrice = analytics.lowestPrice;
+  const highestPrice = analytics.highestPrice;
+  const averagePrice = analytics.averagePrice;
   const currentPrice = Number(product.price);
 
   const level = getPriceLevel({
@@ -159,7 +161,12 @@ function analyzeProduct(product) {
     highestPrice,
     averagePrice,
     discountVsAverage,
-    records: prices.length
+    records: prices.length,
+    analytics,
+    volatility: analytics.volatility,
+    monitoredDays: analytics.monitoredDays,
+    distanceFromLowest: analytics.distanceFromLowest,
+    trendChangePercent: analytics.trendChangePercent,
   };
 }
 

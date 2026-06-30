@@ -27,6 +27,8 @@ function normalizeHistoryInput(product) {
     productTitle: normalizedProduct.productTitle,
     normalizedTitle: normalizedProduct.normalizedTitle,
     productHash: normalizedProduct.productHash,
+    productKey: normalizedProduct.productKey || null,
+    canonicalName: normalizedProduct.canonicalName || null,
     price: roundMoney(price),
     oldPrice: Number.isFinite(oldPrice) ? roundMoney(oldPrice) : null,
     availability: product.availability || "unknown",
