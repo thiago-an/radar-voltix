@@ -160,32 +160,34 @@ function renderLatestRanking() {
       : `<span class="product-name">${title}</span>`;
 
     return `
-      <article class="profit-item">
-        <span class="profit-position">${index + 1}</span>
-        <div class="profit-copy">
-          ${titleContent}
-          <span class="history-meta">
-            ${escapeHtml(item.store || "Radar")} · compra ${formatCurrency(item.price)} · ROI ${escapeHtml(item.roi ?? "--")}%
-          </span>
-          <span class="history-meta">
-  ${escapeHtml(item.priceIntelligence?.label || "Sem inteligência de preço")}
-</span>
-<span class="history-meta">
-  Tendência: ${escapeHtml(item.priceIntelligence?.trendLabel || "Sem tendência")}
-</span>
-<span class="history-meta">
-  Média: ${formatCurrency(item.priceIntelligence?.averagePrice)} · Menor: ${formatCurrency(item.priceIntelligence?.lowestPrice)}
-</span>
-<span class="history-meta">
-  Monitorado: ${escapeHtml(item.priceIntelligence?.monitoredDays ?? "--")} dias · Registros: ${escapeHtml(item.priceIntelligence?.records ?? "--")}
-</span>
-        </div>
-        <div>
-          <strong class="profit-value">${formatCurrency(item.netProfit)}</strong>
-          <span class="score">${escapeHtml(item.score ?? "--")}</span>
-        </div>
-      </article>
-    `;
+  <article class="profit-item ranking-item">
+    <span class="profit-position">${index + 1}</span>
+
+    <div class="profit-copy">
+      ${titleContent}
+
+      <span class="history-meta">
+        ${escapeHtml(item.store || "Radar")} · Compra ${formatCurrency(item.price)}
+      </span>
+
+      <span class="history-meta">
+        ${escapeHtml(item.priceIntelligence?.label || "Sem inteligência de preço")} ·
+        ${escapeHtml(item.priceIntelligence?.trendLabel || "Sem tendência")}
+      </span>
+
+      <span class="history-meta">
+        Média ${formatCurrency(item.priceIntelligence?.averagePrice)} ·
+        Menor ${formatCurrency(item.priceIntelligence?.lowestPrice)}
+      </span>
+    </div>
+
+    <div class="ranking-values">
+      <strong class="profit-value">${formatCurrency(item.netProfit)}</strong>
+      <span class="score">Score ${escapeHtml(item.score ?? "--")}</span>
+      <span class="history-meta">ROI ${escapeHtml(item.roi ?? "--")}%</span>
+    </div>
+  </article>
+`;
   }).join("");
 }
 
